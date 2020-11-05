@@ -107,3 +107,8 @@ export const Pokelist = styled.div`
         }
     }
 `;
+
+export const Errors = styled.span`
+    font-size: 1.5rem;
+    color:#fdcc01;
+`;

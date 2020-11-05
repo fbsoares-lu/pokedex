@@ -4,7 +4,7 @@ import { FiChevronRight } from 'react-icons/fi';
 
 import api from '../../services/api';
 
-import {Article, Form, Content, Footer, Pokelist} from './styles';
+import {Article, Form, Content, Footer, Pokelist, Errors} from './styles';
 import githubLogo from '../../assets/github.svg';
 import linkedinLogo from '../../assets/linkedin.svg';
 
@@ -19,15 +19,27 @@ interface pokemonList {
 const Dashboard: React.FC = () => {
     const [pokemon, setPokemon] = useState('');
     const [pokemonList, setPokemonList] = useState<pokemonList[]>([]);
+    const [error, setError] = useState('');
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>):Promise<void>    {
         event.preventDefault();
+
+        if(!pokemonList) {
+            setError('Pokemon not found.');
+            return;
+        }
+
+        try {
+            const response = await api.get(`/pokemon/${pokemon}`);
+
+            const getPokemonList = response.data;
+
+            setPokemonList([... pokemonList, getPokemonList]);
+            setError('');
+        } catch(err) {
+            setError('Pokemon does not exist.');
+        }
         
-        const response = await api.get(`/pokemon/${pokemon}`);
-
-        const getPokemonList = response.data;
-
-        setPokemonList([... pokemonList, getPokemonList]);
     };
 
     return (
@@ -44,6 +56,8 @@ const Dashboard: React.FC = () => {
                     />
                     <button type="submit">Search</button>
                 </Form>
+
+                {error && <Errors>{error}</Errors>}
 
                 <Footer>
                     <a href="https://github.com/fbsoares-lu">
