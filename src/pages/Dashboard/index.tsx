@@ -3,6 +3,7 @@ import React, {useState, FormEvent, useEffect } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 
 import api from '../../services/api';
+import { Link } from 'react-router-dom';
 
 import { Header, Form, PokemonList, InputError } from './styles';
 
@@ -72,14 +73,14 @@ const Dashboard: React.FC = () => {
             {inputError && <InputError>{inputError}</InputError>}
             <PokemonList>
                 {pokemonList.map(pokemon => (
-                    <a key={pokemon.order} href="/">
+                    <Link key={pokemon.order} to={`/information/${pokemon.name}`}>
                         <img src={pokemon.sprites.front_default} alt=""/>
                         <div>
                             <strong>{pokemon.name}</strong>
                             <p>info a mais</p>
                         </div>
                         <FiChevronRight size={20} />
-                    </a>
+                    </Link>
                 ))}
             </PokemonList>
 
