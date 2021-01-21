@@ -11,20 +11,18 @@ export default createGlobalStyle`
     outline: none;
 }
 
-html {
-    font-size: 62.5%;
-}
-
 body {
     font-family: 'Poppins', sans-serif;
-    /* background: #0b61ae; */
-    background: #E5E7E9 url(${pokeball}) no-repeat right -100px bottom -100px;
+    background: #E5E7E9;
 }
 
-button, body {
-    /* color: #fdcc01; */
+button, input {
     color: #F2F3F4;
+}
 
+#root {
+    max-width: 900px;
+    margin: 0 auto;   
 }
 
 `;

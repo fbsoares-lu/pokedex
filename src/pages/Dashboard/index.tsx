@@ -1,89 +1,90 @@
-import React, {useState, FormEvent} from 'react';
+import React, {useState, FormEvent, useEffect } from 'react';
 
 import { FiChevronRight } from 'react-icons/fi';
 
 import api from '../../services/api';
 
-import {Article, Form, Content, Footer, Pokelist, Errors} from './styles';
-import githubLogo from '../../assets/github.svg';
-import linkedinLogo from '../../assets/linkedin.svg';
+import { Header, Form, PokemonList, InputError } from './styles';
 
-interface pokemonList {
+interface Pokemon {
     name: string;
+    order: number;
+    types: {
+        type: {
+            name: string;
+        }
+    };
     sprites: {
         front_default: string;
     };
-    id: number;
-}
+};
+
 
 const Dashboard: React.FC = () => {
-    const [pokemon, setPokemon] = useState('');
-    const [pokemonList, setPokemonList] = useState<pokemonList[]>([]);
-    const [error, setError] = useState('');
+    const [pokemonName, setPokemonName] = useState('');
+    const [pokemonList, setPokemonList] = useState<Pokemon[]>(() => {
+        const localStoragePokemon = localStorage.getItem('@Pokedex:pokemons');
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>):Promise<void>    {
+        if (localStoragePokemon) {
+            return JSON.parse(localStoragePokemon);
+        } else {
+            return [];
+        }
+    });
+    const [inputError, setInputError] = useState('');
+
+    useEffect(() => {
+        localStorage.setItem('@Pokedex:pokemons', JSON.stringify(pokemonList));
+    }, [pokemonList]);
+
+    async function handleAddPokemon(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
-        if(!pokemonList) {
-            setError('Pokemon not found.');
+        if (!pokemonName) {
+            setInputError('forgot the name of the pokemon');
             return;
         }
-
-        try {
-            const response = await api.get(`/pokemon/${pokemon}`);
-
-            const getPokemonList = response.data;
-
-            setPokemonList([... pokemonList, getPokemonList]);
-            setError('');
-        } catch(err) {
-            setError('Pokemon does not exist.');
-        }
         
-    };
+        try {
+            await api.get(`/pokemon/${pokemonName}`).then((response) => {
+                setPokemonList([...pokemonList, response.data]);
+                setPokemonName('');
+                setInputError('');
+            });
+        } catch {
+            setInputError('Pokemon not exist');
+        }
+    }
 
-    return (
-        <Content>
-            <Article>
+    return(
+        <>
+            <Header>
                 <h1>Pokedex</h1>
-                <p>Welcome to a Pokemon journey.</p>
-
-                <Form onSubmit={handleSubmit}>
-                    <input 
-                    value={pokemon}
-                    onChange={(e):void => setPokemon(e.target.value)}
+            </Header>
+            <Form hasError={!!inputError} onSubmit={handleAddPokemon}>
+                <input 
+                    value={pokemonName}
+                    onChange={e => setPokemonName(e.target.value)} 
                     placeholder="Pokemon's name"
-                    />
-                    <button type="submit">Search</button>
-                </Form>
-
-                {error && <Errors>{error}</Errors>}
-
-                <Footer>
-                    <a href="https://github.com/fbsoares-lu">
-                        <img src={githubLogo} width={40} alt=""/>
-                    </a>
-
-                    <a href="https://github.com/fbsoares-lu">
-                        <img src={linkedinLogo} width={40} alt=""/>
-                    </a>
-                </Footer>
-            </Article>
-
-            <Pokelist>
+                />
+                <button>Search</button>
+            </Form>
+            {inputError && <InputError>{inputError}</InputError>}
+            <PokemonList>
                 {pokemonList.map(pokemon => (
-                    <a key={pokemon.id} href="">
-                        <img src={pokemon.sprites.front_default} alt="pokemonImage"/>
+                    <a key={pokemon.order} href="/">
+                        <img src={pokemon.sprites.front_default} alt=""/>
                         <div>
                             <strong>{pokemon.name}</strong>
-                            <p>Is a leaf pokemon</p>
+                            <p>info a mais</p>
                         </div>
-                        <FiChevronRight size={20}/>
+                        <FiChevronRight size={20} />
                     </a>
                 ))}
-            </Pokelist>
-        </Content>
-    );
+            </PokemonList>
+
+        </>
+    )
 };
 
 export default Dashboard;

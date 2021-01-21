@@ -1,114 +1,122 @@
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
+import { shade } from 'polished';
 
-export const Content = styled.div`
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-`;
+interface inputProps {
+    hasError:boolean;
+}
 
-export const Article = styled.article`
-    background: #e3350d; 
-    height: 100vh;
-    width: 600px;
+export const Header = styled.header`
+    margin-top: 80px;
+    font-size: 20px;
+    max-width: 500px;
     padding: 0 30px;
-
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-
-    h1 {
-        font-size: 5rem;
-    }
-
-    p {
-        font-size: 2rem;
-    }
+    
 `;
 
-export const Form = styled.form`
+export const Form = styled.form<inputProps>`
+    padding: 0 30px;
+    margin-top: 40px;
+    max-width: 600px;
     display: flex;
-    margin-top: 20px;
-    
+
     input {
         flex: 1;
-        height: 70px;
-        padding: 0 24px;
-        border: 0;
-        border-radius: 5px 0 0 5px;
+        height: 65px;
+        padding: 0 20px;
+        border: 2px solid #FFF;
+        border-right: 0;
+        border-radius: 5px 0px 0px 5px;
+        color: #535353;
+        font-size: 14px;
 
-        font-size: 1.8rem;
-        color: #902710;
-    }
-
-
-    button{
-        width: 150px;
-        height: 70px;
-
-        border: 0;
-        border-radius: 0px 5px 5px 0;
-        font-size: 2rem;
-        color: #fff;
-        background: #902710;
-    }
-`; 
-
-export const Footer = styled.footer`
-    position: absolute;
-    bottom: 30px;
-
-    a {
-        img {
-            margin-right: 30px;
+        &::placeholder {
+            color: #A9A9A9;
         }
+
+        ${(props) => props.hasError && css`
+            border-color: #F51E38;
+        `}
+    }
+
+    button {
+        width: 150px;
+        font-size: large;
+        font-weight: bold;
+        border: 0;
+        border-radius: 0px 5px 5px 0px;
+        background: #09C3EC;
+        color: #FFF;
+        transition: background-color 0.2s;
+
+
+        ${(props) => props.hasError ? css`
+            background: #F51E38;
+            &:hover {
+                background: ${shade(0.2, '#F51E38')};
+            }
+        `: css`
+            &:hover {
+                background: ${shade(0.2, '#09C3EC')};
+            }
+        `}
     }
 `;
 
+export const PokemonList = styled.div`
+    padding: 30px;
+    margin-top: 40px;
+    max-width: 700px;
 
-export const Pokelist = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    flex: 1;
-    a {
-        display: block;
+    a{
         display: flex;
         align-items: center;
-        border: 0;
+        padding: 0 30px 0 20px;
+
+        background: #FFF;
         border-radius: 5px;
-        padding: 0 30px;
-        background: #F8F9F9;
-
-        height: 80px;
-        width: 500px;
+        height: 100px;  
         text-decoration: none;
+        transition: 0.2s;
 
+        &+a {
+            margin-top: 16px;
+        }
+
+        &:hover {
+            transform: translateX(10px);
+        }
 
         div {
+            margin-left: 10px;
+            
             strong {
-                font-size: 1.5rem;
-                color: #e3350d;
+                font-size: 18px;
+                color: #09C3EC;
             }
 
             p {
-                font-size: 1.2rem;
-                color: #902710;
+                margin-top: 4px;
+                font-size: 14px;
+                color: #9A9A9A;
             }
         }
 
         svg {
             margin-left: auto;
-            color: #902710;
+            color: #cbcbd6;
         }
 
-        & + a {
-            margin-top: 10px;
+        &+li {
+            margin-top: 16px;
         }
+        
     }
 `;
 
-export const Errors = styled.span`
-    font-size: 1.5rem;
-    color:#fdcc01;
+export const InputError = styled.span`
+    display: block;
+    padding: 0 30px;
+    margin-top: 10px;   
+    font-size: 14px;
+    color: #F51E38;
 `;
